@@ -31,11 +31,7 @@ const PlaceholderDot: React.FC<PlaceholderDotProps> = React.memo(
 
     const isSelectable = useDerivedValue(() => {
       'worklet';
-      return (
-        selectableSquares.value
-          .map((square) => square.includes(currentSquare))
-          .filter((v) => v).length > 0
-      );
+      return selectableSquares.value.includes(currentSquare);
     }, [currentSquare, selectableSquares.value]);
 
     const rPlaceholderStyle = useAnimatedStyle(() => {

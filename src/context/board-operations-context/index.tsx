@@ -187,32 +187,26 @@ const BoardOperationsContextProviderComponent = React.forwardRef<
     (square: Square) => {
       selectedSquare.value = square;
 
-      const validSquares = (chess.moves({
+      const validMoves = chess.moves({
         square,
-      }) ?? []) as Square[];
+      }) ?? [];
 
       // eslint-disable-next-line no-shadow
-      selectableSquares.value = validSquares.map((square) => {
-        // handle castling
-        if (square.toString() == 'O-O') {
-          if (chess.turn() === 'w') {
-            return 'g1';
-          } else {
-            return 'g8';
-          }
-        } else if (square.toString() == 'O-O-O') {
-          if (chess.turn() === 'w') {
-            return 'c1';
-          } else {
-            return 'c8';
-          }
+      selectableSquares.value = validMoves.map((move) => {
+        // handle castling notation
+        if (move === 'O-O') {
+          return chess.turn() === 'w' ? 'g1' : 'g8';
+        } else if (move === 'O-O-O') {
+          return chess.turn() === 'w' ? 'c1' : 'c8';
         }
-        const splittedSquare = square.split('x');
-        if (splittedSquare.length === 0) {
-          return square;
+        
+        // handle capture notation (e.g., "exd4" -> "d4")
+        const splittedMove = move.split('x');
+        if (splittedMove.length > 1) {
+          return splittedMove[splittedMove.length - 1] as Square;
         }
 
-        return splittedSquare[splittedSquare.length - 1] as Square;
+        return move as Square;
       });
     },
     [chess, selectableSquares, selectedSquare]
